@@ -7,9 +7,13 @@
 }
 
 .selectable {
-    -fx-border-width: 5;
+    -fx-border-width: 3;
 }
 
 .square:hover {
     -fx-background-color: ghostwhite;
+}
+
+.unselectable, .unselectable:hover {
+    -fx-background-color: black;
 }
