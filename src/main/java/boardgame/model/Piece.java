@@ -35,7 +35,7 @@ public class Piece {
     }
 
     public static void main(String[] args) {
-        Piece piece = new Piece(PieceType.BLUE, new Position(0, 0));
+        Piece piece = new Piece(PieceType.RED, new Position(0, 0));
         piece.positionProperty().addListener((observableValue, oldPosition, newPosition) -> {
             System.out.printf("%s -> %s\n", oldPosition.toString(), newPosition.toString());
         });

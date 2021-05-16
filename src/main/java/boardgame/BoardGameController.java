@@ -1,8 +1,9 @@
 package boardgame;
 
+import boardgame.model.BlueDirection;
 import boardgame.model.BoardGameModel;
-import boardgame.model.RedDirection;
 import boardgame.model.Position;
+import boardgame.model.RedDirection;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
@@ -18,18 +19,22 @@ import java.util.List;
 public class BoardGameController {
 
     private enum SelectionPhase {
-        SELECT_FROM,
-        SELECT_TO;
+        SELECT_FROM_RED,
+        SELECT_TO_RED,
+        SELECT_FROM_BLUE,
+        SELECT_TO_BLUE;
 
         public SelectionPhase alter() {
             return switch (this) {
-                case SELECT_FROM -> SELECT_TO;
-                case SELECT_TO -> SELECT_FROM;
+                case SELECT_FROM_RED -> SELECT_TO_RED;
+                case SELECT_TO_RED -> SELECT_FROM_BLUE;
+                case SELECT_FROM_BLUE -> SELECT_TO_BLUE;
+                case SELECT_TO_BLUE -> SELECT_FROM_RED;
             };
         }
     }
 
-    private SelectionPhase selectionPhase = SelectionPhase.SELECT_FROM;
+    private SelectionPhase selectionPhase = SelectionPhase.SELECT_FROM_RED;
 
     private List<Position> selectablePositions = new ArrayList<>();
 
@@ -42,6 +47,7 @@ public class BoardGameController {
 
     @FXML
     private void initialize() {
+        System.out.println("initialize");
         createBoard();
         createPieces();
         setSelectablePositions();
@@ -49,6 +55,7 @@ public class BoardGameController {
     }
 
     private void createBoard() {
+        System.out.println("createBoard");
         for (int i = 0; i < board.getRowCount(); i++) {
             for (int j = 0; j < board.getColumnCount(); j++) {
                 var square = createSquare(i, j);
@@ -58,6 +65,7 @@ public class BoardGameController {
     }
 
     private StackPane createSquare(int i, int j) {
+        System.out.println("createSquare");
         var square = new StackPane();
         square.getStyleClass().add("square");
         square.setOnMouseClicked(this::handleMouseClick);
@@ -65,15 +73,21 @@ public class BoardGameController {
     }
 
     private void createPieces() {
-        for (int i = 0; i < model.getPieceCount(); i++) {
-            model.positionProperty(i).addListener(this::piecePositionChange);
-            var piece = createPiece(Color.valueOf(model.getPieceType(i).name()));
-            getSquare(model.getPiecePosition(i)).getChildren().add(piece);
+        for (int i = 0; i < model.getRedPieceCount(); i++) {
+            System.out.println("createPieces " + i);
+
+            model.redPositionProperty(i).addListener(this::piecePositionChange);
+            var redPiece = createPiece(Color.valueOf(model.getRedPieceType(i).name()));
+            getSquare(model.getRedPiecePosition(i)).getChildren().add(redPiece);
+
+            model.bluePositionProperty(i).addListener(this::piecePositionChange);
+            var bluePiece = createPiece(Color.valueOf(model.getBluePieceType(i).name()));
+            getSquare(model.getBluePiecePosition(i)).getChildren().add(bluePiece);
         }
     }
 
     private Circle createPiece(Color color) {
-        var piece = new Circle(50);
+        var piece = new Circle(25);
         piece.setFill(color);
         return piece;
     }
@@ -90,18 +104,34 @@ public class BoardGameController {
 
     private void handleClickOnSquare(Position position) {
         switch (selectionPhase) {
-            case SELECT_FROM -> {
+            case SELECT_FROM_RED -> {
                 if (selectablePositions.contains(position)) {
                     selectPosition(position);
                     alterSelectionPhase();
                 }
             }
-            case SELECT_TO -> {
+            case SELECT_TO_RED -> {
                 if (selectablePositions.contains(position)) {
-                    var pieceNumber = model.getPieceNumber(selected).getAsInt();
+                    var pieceNumber = model.getRedPieceNumber(selected).getAsInt();
                     var direction = RedDirection.of(position.row() - selected.row(), position.col() - selected.col());
                     Logger.info("Moving piece {} {}", pieceNumber, direction);
-                    model.move(pieceNumber, direction);
+                    model.redMove(pieceNumber, direction);
+                    deselectSelectedPosition();
+                    alterSelectionPhase();
+                }
+            }
+            case SELECT_FROM_BLUE -> {
+                if (selectablePositions.contains(position)) {
+                    selectPosition(position);
+                    alterSelectionPhase();
+                }
+            }
+            case SELECT_TO_BLUE -> {
+                if (selectablePositions.contains(position)) {
+                    var pieceNumber = model.getBluePieceNumber(selected).getAsInt();
+                    var direction = BlueDirection.of(position.row() - selected.row(), position.col() - selected.col());
+                    Logger.info("Moving piece {} {}", pieceNumber, direction);
+                    model.blueMove(pieceNumber, direction);
                     deselectSelectedPosition();
                     alterSelectionPhase();
                 }
@@ -139,10 +169,17 @@ public class BoardGameController {
     private void setSelectablePositions() {
         selectablePositions.clear();
         switch (selectionPhase) {
-            case SELECT_FROM -> selectablePositions.addAll(model.getPiecePositions());
-            case SELECT_TO -> {
-                var pieceNumber = model.getPieceNumber(selected).getAsInt();
-                for (var direction : model.getValidMoves(pieceNumber)) {
+            case SELECT_FROM_RED -> selectablePositions.addAll(model.getRedPiecePositions());
+            case SELECT_TO_RED -> {
+                var pieceNumber = model.getRedPieceNumber(selected).getAsInt();
+                for (var direction : model.getRedValidMoves(pieceNumber)) {
+                    selectablePositions.add(selected.moveTo(direction));
+                }
+            }
+            case SELECT_FROM_BLUE -> selectablePositions.addAll(model.getBluePiecePositions());
+            case SELECT_TO_BLUE -> {
+                var pieceNumber = model.getBluePieceNumber(selected).getAsInt();
+                for (var direction : model.getBlueValidMoves(pieceNumber)) {
                     selectablePositions.add(selected.moveTo(direction));
                 }
             }
@@ -164,7 +201,13 @@ public class BoardGameController {
     }
 
     private StackPane getSquare(Position position) {
-        for (var child : board.getChildren()) {
+        System.out.println("getSquare");
+        testcase: for (var child : board.getChildren()) {
+            System.out.println("getSquare " + child);
+            if (GridPane.getRowIndex(child) == null) {
+                System.out.println("child rowindex is null ");
+                continue testcase;
+            }
             if (GridPane.getRowIndex(child) == position.row() && GridPane.getColumnIndex(child) == position.col()) {
                 return (StackPane) child;
             }
@@ -179,5 +222,4 @@ public class BoardGameController {
         newSquare.getChildren().addAll(oldSquare.getChildren());
         oldSquare.getChildren().clear();
     }
-
 }

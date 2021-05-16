@@ -6,20 +6,42 @@ import java.util.*;
 
 public class BoardGameModel {
 
-    public static int BOARD_SIZE = 5;
+    public static int BOARD_HEIGHT = 6;
+    public static int BOARD_WIDTH = 7;
 
-    private Piece[] pieces;
+    private Piece[] redPieces;
+    private Piece[] bluePieces;
 
     public BoardGameModel() {
-        this(new Piece(PieceType.BLUE, new Position(0, 0)),
-                new Piece(PieceType.GREEN, new Position(0, BOARD_SIZE - 1)),
-                new Piece(PieceType.RED, new Position(BOARD_SIZE - 1, 0)),
-                new Piece(PieceType.YELLOW, new Position(BOARD_SIZE - 1, BOARD_SIZE - 1)));
+        this(new Piece(PieceType.RED, new Position(0, 0)),
+                new Piece(PieceType.RED, new Position(0, BOARD_WIDTH - 6)),
+                new Piece(PieceType.RED, new Position(0, BOARD_WIDTH - 5)),
+                new Piece(PieceType.RED, new Position(0, BOARD_WIDTH - 4)),
+                new Piece(PieceType.RED, new Position(0, BOARD_WIDTH - 3)),
+                new Piece(PieceType.RED, new Position(0, BOARD_WIDTH - 2)),
+                new Piece(PieceType.RED, new Position(0, BOARD_WIDTH - 1)),
+
+                new Piece(PieceType.BLUE, new Position(BOARD_HEIGHT - 1, 0)),
+                new Piece(PieceType.BLUE, new Position(BOARD_HEIGHT - 1, BOARD_WIDTH - 6)),
+                new Piece(PieceType.BLUE, new Position(BOARD_HEIGHT - 1, BOARD_WIDTH - 5)),
+                new Piece(PieceType.BLUE, new Position(BOARD_HEIGHT - 1, BOARD_WIDTH - 4)),
+                new Piece(PieceType.BLUE, new Position(BOARD_HEIGHT - 1, BOARD_WIDTH - 3)),
+                new Piece(PieceType.BLUE, new Position(BOARD_HEIGHT - 1, BOARD_WIDTH - 2)),
+                new Piece(PieceType.BLUE, new Position(BOARD_HEIGHT - 1, BOARD_WIDTH - 1)));
+
+
     }
 
     public BoardGameModel(Piece... pieces) {
         checkPieces(pieces);
-        this.pieces = pieces.clone();
+        Piece[] redPieces = new Piece[BOARD_WIDTH];
+        Piece[] bluePieces = new Piece[BOARD_WIDTH];
+        for (int i = 0; i < BOARD_WIDTH; i++) {
+            redPieces[i] = pieces[i];
+            bluePieces[i] = pieces[i + BOARD_WIDTH];
+        }
+        this.redPieces = redPieces.clone();
+        this.bluePieces = bluePieces.clone();
     }
 
     private void checkPieces(Piece[] pieces) {
@@ -32,31 +54,43 @@ public class BoardGameModel {
         }
     }
 
-    public int getPieceCount() {
-        return pieces.length;
+    public int getRedPieceCount() {
+        return redPieces.length;
+    }
+    public int getBluePieceCount() {
+        return bluePieces.length;
     }
 
-    public PieceType getPieceType(int pieceNumber) {
-        return pieces[pieceNumber].getType();
+    public PieceType getRedPieceType(int pieceNumber) {
+        return redPieces[pieceNumber].getType();
+    }
+    public PieceType getBluePieceType(int pieceNumber) {
+        return bluePieces[pieceNumber].getType();
     }
 
-    public Position getPiecePosition(int pieceNumber) {
-        return pieces[pieceNumber].getPosition();
+    public Position getRedPiecePosition(int pieceNumber) {
+        return redPieces[pieceNumber].getPosition();
+    }
+    public Position getBluePiecePosition(int pieceNumber) {
+        return bluePieces[pieceNumber].getPosition();
     }
 
-    public ObjectProperty<Position> positionProperty(int pieceNumber) {
-        return pieces[pieceNumber].positionProperty();
+    public ObjectProperty<Position> redPositionProperty(int pieceNumber) {
+        return redPieces[pieceNumber].positionProperty();
+    }
+    public ObjectProperty<Position> bluePositionProperty(int pieceNumber) {
+        return bluePieces[pieceNumber].positionProperty();
     }
 
-    public boolean isValidMove(int pieceNumber, RedDirection direction) {
-        if (pieceNumber < 0 || pieceNumber >= pieces.length) {
+    public boolean isValidRedMove(int pieceNumber, RedDirection direction) {
+        if (pieceNumber < 0 || pieceNumber >= redPieces.length) {
             throw new IllegalArgumentException();
         }
-        Position newPosition = pieces[pieceNumber].getPosition().moveTo(direction);
+        Position newPosition = redPieces[pieceNumber].getPosition().moveTo(direction);
         if (! isOnBoard(newPosition)) {
             return false;
         }
-        for (var piece : pieces) {
+        for (var piece : redPieces) {
             if (piece.getPosition().equals(newPosition)) {
                 return false;
             }
@@ -64,36 +98,93 @@ public class BoardGameModel {
         return true;
     }
 
-    public Set<RedDirection> getValidMoves(int pieceNumber) {
+    public boolean isValidBlueMove(int pieceNumber, BlueDirection direction) {
+        if (pieceNumber < 0 || pieceNumber >= bluePieces.length) {
+            throw new IllegalArgumentException();
+        }
+        Position newPosition = bluePieces[pieceNumber].getPosition().moveTo(direction);
+        if (! isOnBoard(newPosition)) {
+            return false;
+        }
+        for (var piece : bluePieces) {
+            if (piece.getPosition().equals(newPosition)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Set<RedDirection> getRedValidMoves(int pieceNumber) {
         EnumSet<RedDirection> validMoves = EnumSet.noneOf(RedDirection.class);
         for (var direction : RedDirection.values()) {
-            if (isValidMove(pieceNumber, direction)) {
+            if (isValidRedMove(pieceNumber, direction)) {
                 validMoves.add(direction);
             }
         }
         return validMoves;
     }
 
-    public void move(int pieceNumber, RedDirection direction) {
-        pieces[pieceNumber].moveTo(direction);
+    public Set<BlueDirection> getBlueValidMoves(int pieceNumber) {
+        EnumSet<BlueDirection> validMoves = EnumSet.noneOf(BlueDirection.class);
+        for (var direction : BlueDirection.values()) {
+            if (isValidBlueMove(pieceNumber, direction)) {
+                validMoves.add(direction);
+            }
+        }
+        return validMoves;
+    }
+
+    public void redMove(int pieceNumber, RedDirection direction) {
+        redPieces[pieceNumber].moveTo(direction);
+    }
+    public void blueMove(int pieceNumber, BlueDirection direction) {
+        bluePieces[pieceNumber].moveTo(direction);
     }
 
     public static boolean isOnBoard(Position position) {
-        return 0 <= position.row() && position.row() < BOARD_SIZE
-                && 0 <= position.col() && position.col() < BOARD_SIZE;
+        return 0 <= position.row() && position.row() < BOARD_HEIGHT
+                && 0 <= position.col() && position.col() < BOARD_WIDTH;
     }
 
-    public List<Position> getPiecePositions() {
-        List<Position> positions = new ArrayList<>(pieces.length);
-        for (var piece : pieces) {
+    public List<Position> getAllPiecePositions() {
+        List<Position> positions = new ArrayList<>(redPieces.length + bluePieces.length);
+        for (var piece : redPieces) {
+            positions.add(piece.getPosition());
+        }
+        for (var piece : bluePieces) {
             positions.add(piece.getPosition());
         }
         return positions;
     }
 
-    public OptionalInt getPieceNumber(Position position) {
-        for (int i = 0; i < pieces.length; i++) {
-            if (pieces[i].getPosition().equals(position)) {
+    public List<Position> getRedPiecePositions() {
+        List<Position> positions = new ArrayList<>(redPieces.length);
+        for (var piece : redPieces) {
+            positions.add(piece.getPosition());
+        }
+        return positions;
+    }
+
+    public List<Position> getBluePiecePositions() {
+        List<Position> positions = new ArrayList<>(bluePieces.length);
+        for (var piece : bluePieces) {
+            positions.add(piece.getPosition());
+        }
+        return positions;
+    }
+
+    public OptionalInt getRedPieceNumber(Position position) {
+        for (int i = 0; i < redPieces.length; i++) {
+            if (redPieces[i].getPosition().equals(position)) {
+                return OptionalInt.of(i);
+            }
+        }
+        return OptionalInt.empty();
+    }
+
+    public OptionalInt getBluePieceNumber(Position position) {
+        for (int i = 0; i < bluePieces.length; i++) {
+            if (bluePieces[i].getPosition().equals(position)) {
                 return OptionalInt.of(i);
             }
         }
@@ -102,7 +193,10 @@ public class BoardGameModel {
 
     public String toString() {
         StringJoiner joiner = new StringJoiner(",", "[", "]");
-        for (var piece : pieces) {
+        for (var piece : redPieces) {
+            joiner.add(piece.toString());
+        }
+        for (var piece : bluePieces) {
             joiner.add(piece.toString());
         }
         return joiner.toString();
@@ -112,5 +206,4 @@ public class BoardGameModel {
         BoardGameModel model = new BoardGameModel();
         System.out.println(model);
     }
-
 }
