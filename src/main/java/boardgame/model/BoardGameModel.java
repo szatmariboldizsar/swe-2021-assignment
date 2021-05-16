@@ -11,9 +11,13 @@ public class BoardGameModel {
 
     private Piece[] redPieces;
     private Piece[] bluePieces;
+    public Position[] unselectablePositions;
 
     public BoardGameModel() {
-        this(new Piece(PieceType.RED, new Position(0, 0)),
+        this(new Position[]{new Position(3, 2),
+                        new Position(2, 4)},
+
+                new Piece(PieceType.RED, new Position(0, 0)),
                 new Piece(PieceType.RED, new Position(0, BOARD_WIDTH - 6)),
                 new Piece(PieceType.RED, new Position(0, BOARD_WIDTH - 5)),
                 new Piece(PieceType.RED, new Position(0, BOARD_WIDTH - 4)),
@@ -32,8 +36,10 @@ public class BoardGameModel {
 
     }
 
-    public BoardGameModel(Piece... pieces) {
+    public BoardGameModel(Position[] positions, Piece... pieces) {
         checkPieces(pieces);
+        checkPositions(positions);
+        this.unselectablePositions = positions.clone();
         Piece[] redPieces = new Piece[BOARD_WIDTH];
         Piece[] bluePieces = new Piece[BOARD_WIDTH];
         for (int i = 0; i < BOARD_WIDTH; i++) {
@@ -51,6 +57,19 @@ public class BoardGameModel {
                 throw new IllegalArgumentException();
             }
             seen.add(piece.getPosition());
+        }
+    }
+
+    private void checkPositions(Position[] positions) {
+        ArrayList<Integer> starterRows = new ArrayList<>();
+        starterRows.add(0);
+        starterRows.add(BOARD_HEIGHT - 1);
+        var seen = new HashSet<Position>();
+        for (var position : positions) {
+            if (! isOnBoard(position) || seen.contains(position) || starterRows.contains(position.row())) {
+                throw new IllegalArgumentException();
+            }
+            seen.add(position);
         }
     }
 
@@ -87,7 +106,7 @@ public class BoardGameModel {
             throw new IllegalArgumentException();
         }
         Position newPosition = redPieces[pieceNumber].getPosition().moveTo(direction);
-        if (! isOnBoard(newPosition)) {
+        if (! isOnBoard(newPosition) || isUnselectable(newPosition)) {
             return false;
         }
         for (var piece : redPieces) {
@@ -103,7 +122,7 @@ public class BoardGameModel {
             throw new IllegalArgumentException();
         }
         Position newPosition = bluePieces[pieceNumber].getPosition().moveTo(direction);
-        if (! isOnBoard(newPosition)) {
+        if (! isOnBoard(newPosition) || isUnselectable(newPosition)) {
             return false;
         }
         for (var piece : bluePieces) {
@@ -112,6 +131,15 @@ public class BoardGameModel {
             }
         }
         return true;
+    }
+
+    public boolean isUnselectable(Position position) {
+        for (var unselectable : unselectablePositions) {
+            if (position.equals(unselectable)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Set<RedDirection> getRedValidMoves(int pieceNumber) {

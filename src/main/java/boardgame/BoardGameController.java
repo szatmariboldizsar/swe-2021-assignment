@@ -37,6 +37,7 @@ public class BoardGameController {
     private SelectionPhase selectionPhase = SelectionPhase.SELECT_FROM_RED;
 
     private List<Position> selectablePositions = new ArrayList<>();
+    private Position[] unselectablePositions;
 
     private Position selected;
 
@@ -50,6 +51,7 @@ public class BoardGameController {
         System.out.println("initialize");
         createBoard();
         createPieces();
+        setUnselectablePositions();
         setSelectablePositions();
         showSelectablePositions();
     }
@@ -164,6 +166,14 @@ public class BoardGameController {
     private void hideSelectedPosition() {
         var square = getSquare(selected);
         square.getStyleClass().remove("selected");
+    }
+
+    private void setUnselectablePositions() {
+        unselectablePositions = model.unselectablePositions;
+        for (var unselectable : unselectablePositions) {
+            var square = getSquare(unselectable);
+            square.getStyleClass().add("unselectable");
+        }
     }
 
     private void setSelectablePositions() {
