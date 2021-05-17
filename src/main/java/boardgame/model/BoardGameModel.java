@@ -152,6 +152,22 @@ public class BoardGameModel {
         return false;
     }
 
+    public Set<RedDirection> getAllRedValidMoves() {
+        EnumSet<RedDirection> allValidMoves = EnumSet.noneOf(RedDirection.class);
+        for (var pieceNumber = 0; pieceNumber < redPieces.length; pieceNumber++) {
+            allValidMoves.addAll(getRedValidMoves(pieceNumber));
+            }
+        return allValidMoves;
+    }
+
+    public Set<BlueDirection> getAllBlueValidMoves() {
+        EnumSet<BlueDirection> allValidMoves = EnumSet.noneOf(BlueDirection.class);
+        for (var pieceNumber = 0; pieceNumber < bluePieces.length; pieceNumber++) {
+            allValidMoves.addAll(getBlueValidMoves(pieceNumber));
+        }
+        return allValidMoves;
+    }
+
     public Set<RedDirection> getRedValidMoves(int pieceNumber) {
         EnumSet<RedDirection> validMoves = EnumSet.noneOf(RedDirection.class);
         for (var direction : RedDirection.values()) {

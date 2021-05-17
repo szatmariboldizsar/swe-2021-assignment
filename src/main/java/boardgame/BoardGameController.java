@@ -140,7 +140,16 @@ public class BoardGameController {
         hideSelectablePositions();
         setSelectablePositions();
         showSelectablePositions();
+        if (model.getAllBlueValidMoves().isEmpty()) {
+            System.out.println("The winner is RED");
+            System.exit(0);
+        }
+        if (model.getAllRedValidMoves().isEmpty()) {
+            System.out.println("The winner is BLUE");
+            System.exit(0);
+        }
     }
+
 
     private void selectPosition(Position position) {
         selected = position;
