@@ -73,6 +73,14 @@ public class BoardGameModel {
         }
     }
 
+    public Piece getRedPiece(int pieceNumber) {
+        return redPieces[pieceNumber];
+    }
+
+    public Piece getBluePiece(int pieceNumber) {
+        return bluePieces[pieceNumber];
+    }
+
     public int getRedPieceCount() {
         return redPieces.length;
     }
@@ -227,12 +235,10 @@ public class BoardGameModel {
 
     public List<Position> getAllPiecePositions() {
         List<Position> positions = new ArrayList<>(redPieces.length + bluePieces.length);
-        for (var piece : redPieces) {
-            positions.add(piece.getPosition());
-        }
-        for (var piece : bluePieces) {
-            positions.add(piece.getPosition());
-        }
+
+        positions.addAll(getRedPiecePositions());
+        positions.addAll(getBluePiecePositions());
+
         return positions;
     }
 

@@ -1,14 +1,9 @@
 package boardgame;
 
-import boardgame.model.BlueDirection;
-import boardgame.model.BoardGameModel;
-import boardgame.model.Position;
-import boardgame.model.RedDirection;
-import javafx.application.Platform;
+import boardgame.model.*;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
@@ -17,11 +12,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import jdk.jfr.StackTrace;
 import org.tinylog.Logger;
 
-import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +32,15 @@ public class BoardGameController {
                 case SELECT_TO_BLUE -> SELECT_FROM_RED;
                 case SELECT_FROM_RED -> SELECT_TO_RED;
                 case SELECT_TO_RED -> SELECT_FROM_BLUE;
+            };
+        }
+
+        public SelectionPhase alterBack() {
+            return switch (this) {
+                case SELECT_TO_BLUE -> SELECT_FROM_BLUE;
+                case SELECT_TO_RED -> SELECT_FROM_RED;
+                case SELECT_FROM_BLUE -> throw new RuntimeException();
+                case SELECT_FROM_RED -> throw new RuntimeException();
             };
         }
     }
@@ -123,26 +124,44 @@ public class BoardGameController {
                 if (selectablePositions.contains(position)) {
                     selectPosition(position);
                     alterSelectionPhase();
+                    Logger.info("Piece {} selected", model.getBluePieceNumber(selected).getAsInt());
+                    /*try {
+                        wait(0,1);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }*/
                 }
             }
             case SELECT_TO_BLUE: {
-                if (selectablePositions.contains(position)) {
-                    var pieceNumber = model.getBluePieceNumber(selected).getAsInt();
-                    var direction = BlueDirection.of(position.row() - selected.row(), position.col() - selected.col());
-                    Logger.info("Moving piece {} {}", pieceNumber, direction);
-                    model.blueMove(pieceNumber, direction);
-                    deselectSelectedPosition();
-                    alterSelectionPhase();
+                if (model.getBluePieceNumber(selected).isPresent()) {
+                    if (selectablePositions.contains(position)) {
+                        var pieceNumber = model.getBluePieceNumber(selected).getAsInt();
+                        var direction = BlueDirection.of(position.row() - selected.row(), position.col() - selected.col());
+                        Logger.info("Moving BLUE piece {} {}", pieceNumber, direction);
+                        model.blueMove(pieceNumber, direction);
+                        deselectSelectedPosition();
+                        alterSelectionPhase();
+                    }/*else if (position.equals(model.getBluePiecePosition(model.getBluePieceNumber(selected).getAsInt()))) {
+                            Logger.info("Back to piece selection");
+                            deselectSelectedPosition();
+                            backToPieceSelection();
+                    }*/
                 }
             }
             case SELECT_TO_RED: {
-                if (selectablePositions.contains(position)) {
-                    var pieceNumber = model.getRedPieceNumber(selected).getAsInt();
-                    var direction = RedDirection.of(position.row() - selected.row(), position.col() - selected.col());
-                    Logger.info("Moving piece {} {}", pieceNumber, direction);
-                    model.redMove(pieceNumber, direction);
-                    deselectSelectedPosition();
-                    alterSelectionPhase();
+                if (model.getRedPieceNumber(selected).isPresent()) {
+                    if (selectablePositions.contains(position) && model.getRedPieceNumber(selected).isPresent()) {
+                        var pieceNumber = model.getRedPieceNumber(selected).getAsInt();
+                        var direction = RedDirection.of(position.row() - selected.row(), position.col() - selected.col());
+                        Logger.info("Moving RED piece {} {}", pieceNumber, direction);
+                        model.redMove(pieceNumber, direction);
+                        deselectSelectedPosition();
+                        alterSelectionPhase();
+                    }/*else if (position.equals(model.getRedPiecePosition(model.getRedPieceNumber(selected).getAsInt()))) {
+                            Logger.info("Back to piece selection");
+                            deselectSelectedPosition();
+                            backToPieceSelection();
+                    }*/
                 }
             }
         }
@@ -161,6 +180,13 @@ public class BoardGameController {
             winnerName = P1name;
             endGame();
         }
+    }
+
+    private void backToPieceSelection() {
+        selectionPhase = selectionPhase.alterBack();
+        hideSelectablePositions();
+        setSelectablePositions();
+        showSelectablePositions();
     }
 
 
@@ -255,7 +281,7 @@ public class BoardGameController {
         try {
             Parent root = fxmlLoader.load();
             EndController controller = fxmlLoader.<EndController>getController();
-            controller.setName(winnerName);
+            controller.setNames(winnerName);
             Stage stage = (Stage) board.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
