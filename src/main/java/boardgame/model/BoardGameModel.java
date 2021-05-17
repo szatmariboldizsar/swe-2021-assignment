@@ -113,6 +113,9 @@ public class BoardGameModel {
         if (!isOnBoard(newPosition) || isUnselectable(newPosition)) {
             return false;
         }
+        if (direction.equals(RedDirection.DOWN) && getBluePieceNumber(newPosition).isPresent()) {
+            return false;
+        }
         for (var piece : redPieces) {
             if (piece.getPosition().equals(newPosition)) {
                 return false;
@@ -127,6 +130,9 @@ public class BoardGameModel {
         }
         Position newPosition = bluePieces[pieceNumber].getPosition().moveTo(direction);
         if (!isOnBoard(newPosition) || isUnselectable(newPosition)) {
+            return false;
+        }
+        if (direction.equals(BlueDirection.UP) && getRedPieceNumber(newPosition).isPresent()) {
             return false;
         }
         for (var piece : bluePieces) {
@@ -215,10 +221,8 @@ public class BoardGameModel {
     }
 
     public List<Position> getRedPiecePositions() {
-        System.out.println("redPieces lenght: " + redPieces.length);
         List<Position> positions = new ArrayList<>(redPieces.length);
         for (var piece : redPieces) {
-            System.out.println("redPieces: " + piece);
             positions.add(piece.getPosition());
         }
         return positions;
