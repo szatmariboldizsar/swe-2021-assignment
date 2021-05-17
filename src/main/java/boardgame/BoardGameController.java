@@ -7,13 +7,21 @@ import boardgame.model.RedDirection;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import jdk.jfr.StackTrace;
 import org.tinylog.Logger;
 
+import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +55,7 @@ public class BoardGameController {
 
     private String P1name;
     private String P2name;
+    private String winnerName;
 
     @FXML
     private GridPane board;
@@ -145,12 +154,12 @@ public class BoardGameController {
         setSelectablePositions();
         showSelectablePositions();
         if (model.getAllBlueValidMoves().isEmpty()) {
-            System.out.println("The winner is " + P2name);
-            Platform.exit();
+            winnerName = P2name;
+            endGame();
         }
         if (model.getAllRedValidMoves().isEmpty()) {
-            System.out.println("The winner is " + P1name);
-            Platform.exit();
+            winnerName = P1name;
+            endGame();
         }
     }
 
@@ -239,5 +248,20 @@ public class BoardGameController {
         Logger.info("Setting names to {} & {}", name1, name2);
         this.P1name = name1;
         this.P2name = name2;
+    }
+
+    public void endGame() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/end.fxml"));
+        try {
+            Parent root = fxmlLoader.load();
+            EndController controller = fxmlLoader.<EndController>getController();
+            controller.setName(winnerName);
+            Stage stage = (Stage) board.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
