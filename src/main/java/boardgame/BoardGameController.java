@@ -4,6 +4,7 @@ import boardgame.model.BlueDirection;
 import boardgame.model.BoardGameModel;
 import boardgame.model.Position;
 import boardgame.model.RedDirection;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
@@ -43,6 +44,9 @@ public class BoardGameController {
     private Position selected;
 
     private BoardGameModel model = new BoardGameModel();
+
+    private String P1name;
+    private String P2name;
 
     @FXML
     private GridPane board;
@@ -88,7 +92,7 @@ public class BoardGameController {
     }
 
     private Circle createPiece(Color color) {
-        var piece = new Circle(25);
+        var piece = new Circle(35);
         piece.setFill(color);
         return piece;
     }
@@ -141,12 +145,12 @@ public class BoardGameController {
         setSelectablePositions();
         showSelectablePositions();
         if (model.getAllBlueValidMoves().isEmpty()) {
-            System.out.println("The winner is RED");
-            System.exit(0);
+            System.out.println("The winner is " + P2name);
+            Platform.exit();
         }
         if (model.getAllRedValidMoves().isEmpty()) {
-            System.out.println("The winner is BLUE");
-            System.exit(0);
+            System.out.println("The winner is " + P1name);
+            Platform.exit();
         }
     }
 
@@ -229,5 +233,11 @@ public class BoardGameController {
         StackPane newSquare = getSquare(newPosition);
         newSquare.getChildren().addAll(oldSquare.getChildren());
         oldSquare.getChildren().clear();
+    }
+
+    public void setNames(String name1, String name2) {
+        Logger.info("Setting names to {} & {}", name1, name2);
+        this.P1name = name1;
+        this.P2name = name2;
     }
 }
