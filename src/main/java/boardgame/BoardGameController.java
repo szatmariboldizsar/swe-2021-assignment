@@ -208,7 +208,8 @@ public class BoardGameController {
                         model.blueMove(pieceNumber, direction);
                         deselectSelectedPosition();
                         alterSelectionPhase();
-                    }/*else if (position.equals(model.getBluePiecePosition(model.getBluePieceNumber(selected).getAsInt()))) {
+                    }/*TODO selection cancellation only works with wait, but throws IllegalMonitoringStateException on every click
+                    else if (position.equals(model.getBluePiecePosition(model.getBluePieceNumber(selected).getAsInt()))) {
                             Logger.info("Back to piece selection");
                             deselectSelectedPosition();
                             backToPieceSelection();
@@ -224,7 +225,8 @@ public class BoardGameController {
                         model.redMove(pieceNumber, direction);
                         deselectSelectedPosition();
                         alterSelectionPhase();
-                    }/*else if (position.equals(model.getRedPiecePosition(model.getRedPieceNumber(selected).getAsInt()))) {
+                    }/*TODO selection cancellation only works with wait, but throws IllegalMonitoringStateException on every click
+                    else if (position.equals(model.getRedPiecePosition(model.getRedPieceNumber(selected).getAsInt()))) {
                             Logger.info("Back to piece selection");
                             deselectSelectedPosition();
                             backToPieceSelection();
