@@ -370,6 +370,9 @@ public class BoardGameModel {
     }
 
     public List<Position> getNotFinishedRedPiecePositions() {
+        /**
+         * Returns a list of the positions of not finished Player2 pieces
+         */
         List<Position> allPositions = getRedPiecePositions();
         List<Position> newPositions = new ArrayList<>();
         for (var position : allPositions) {
@@ -381,6 +384,9 @@ public class BoardGameModel {
     }
 
     public List<Position> getNotFinishedBluePiecePositions() {
+        /**
+         * Returns a list of the positions of not finished Player1 pieces
+         */
         List<Position> allPositions = getBluePiecePositions();
         List<Position> newPositions = new ArrayList<>();
         for (var position : allPositions) {
