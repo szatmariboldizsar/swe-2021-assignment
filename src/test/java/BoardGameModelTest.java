@@ -40,16 +40,28 @@ class BoardGameModelTest {
     @Test
     public void testGetAllValidMoves() {
         BoardGameModel bgm = new BoardGameModel();
-        EnumSet<RedDirection> redMoves = EnumSet.noneOf(RedDirection.class);
-        EnumSet<BlueDirection> blueMoves = EnumSet.noneOf(BlueDirection.class);
-        for (var move : RedDirection.values()) {
-            redMoves.add(move);
-        }
-        for (var move : BlueDirection.values()) {
-            blueMoves.add(move);
-        }
+        EnumSet<RedDirection> redMoves = EnumSet.allOf(RedDirection.class);
+        EnumSet<BlueDirection> blueMoves = EnumSet.allOf(BlueDirection.class);
 
         assertEquals(redMoves, bgm.getAllRedValidMoves());
         assertEquals(blueMoves, bgm.getAllBlueValidMoves());
+    }
+
+    @Test
+    public void testIsOnBoard() {
+        BoardGameModel bgm = new BoardGameModel();
+        for (int i = 0; i < bgm.BOARD_WIDTH; i++) {
+            for (int j = 0; j < bgm.BOARD_HEIGHT; j++) {
+                assertTrue(bgm.isOnBoard(new Position(j, i)));
+            }
+        }
+        for (int i = 0; i < BoardGameModel.BOARD_WIDTH; i++) {
+            assertFalse(BoardGameModel.isOnBoard(new Position(-1, i)));
+            assertFalse(BoardGameModel.isOnBoard(new Position(BoardGameModel.BOARD_HEIGHT, i)));
+        }
+        for (int i = 0; i < BoardGameModel.BOARD_HEIGHT; i++) {
+            assertFalse(BoardGameModel.isOnBoard(new Position(i, -1)));
+            assertFalse(BoardGameModel.isOnBoard(new Position(i, BoardGameModel.BOARD_WIDTH)));
+        }
     }
 }
