@@ -275,21 +275,33 @@ public class BoardGameController {
     }
 
     private void showSelectedPosition() {
+        /**
+         * Displays selected position
+         */
         var square = getSquare(selected);
         square.getStyleClass().add("selected");
     }
 
     private void deselectSelectedPosition() {
+        /**
+         * Deselects selected position
+         */
         hideSelectedPosition();
         selected = null;
     }
 
     private void hideSelectedPosition() {
+        /**
+         * Hides the selected position
+         */
         var square = getSquare(selected);
         square.getStyleClass().remove("selected");
     }
 
     private void setUnselectablePositions() {
+        /**
+         * Sets black tiles
+         */
         unselectablePositions = model.unselectablePositions;
         for (var unselectable : unselectablePositions) {
             var square = getSquare(unselectable);
@@ -322,6 +334,9 @@ public class BoardGameController {
     }
 
     private void showSelectablePositions() {
+        /**
+         * Displays selectable positions
+         */
         for (var selectablePosition : selectablePositions) {
             var square = getSquare(selectablePosition);
             square.getStyleClass().add("selectable");
@@ -329,6 +344,9 @@ public class BoardGameController {
     }
 
     private void hideSelectablePositions() {
+        /**
+         * Hides selectable positions
+         */
         for (var selectablePosition : selectablePositions) {
             var square = getSquare(selectablePosition);
             square.getStyleClass().remove("selectable");

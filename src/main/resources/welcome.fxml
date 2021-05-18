@@ -31,6 +31,9 @@
          <font>
             <Font size="20.0" />
          </font></TextField>
-      <Button fx:id="OK" layoutX="205.0" layoutY="328.0" mnemonicParsing="false" onAction="#switchScene" prefHeight="54.0" prefWidth="110.0" text="OK" />
+      <Button fx:id="OK" layoutX="205.0" layoutY="328.0" mnemonicParsing="false" onAction="#switchScene" prefHeight="54.0" prefWidth="110.0" text="START">
+         <font>
+            <Font size="19.0" />
+         </font></Button>
    </children>
 </AnchorPane>

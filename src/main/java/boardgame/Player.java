@@ -15,7 +15,7 @@ public class Player {
     private String name;
     private int wins;
 
-    public static List<Player> players = new ArrayList<>();
+    public static List<Player> players;
 
     public static Set<String> getNames() {
         var names = new HashSet<String>();
