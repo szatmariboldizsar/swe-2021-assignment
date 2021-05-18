@@ -7,7 +7,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="396.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boardgame.EndController">
    <children>
-      <Text fx:id="text" layoutX="67.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="385.13671875">
+      <Text fx:id="text" layoutX="67.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="385.13671875">
          <font>
             <Font size="30.0" />
          </font>
