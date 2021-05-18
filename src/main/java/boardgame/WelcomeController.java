@@ -13,6 +13,9 @@ import org.tinylog.Logger;
 import java.io.IOException;
 
 public class WelcomeController {
+    /**
+     * Controller class of welcome.fxml
+     */
     @FXML
     private TextField P1nameField;
 
@@ -35,6 +38,10 @@ public class WelcomeController {
 
     @FXML
     private void switchScene(ActionEvent event) throws IOException {
+        /**
+         * Sets up the game's window when START button is pressed,
+         * sets the player names in BoardGameController class
+         */
         Logger.info("Player 1 name entered: {}", P1nameField.getText());
         Logger.info("Player 2 name entered: {}", P2nameField.getText());
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui.fxml"));

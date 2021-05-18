@@ -18,8 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardGameController {
+    /**
+     * Controller class of ui.fxml
+     */
 
     private enum SelectionPhase {
+        /**
+         * Enum of the game stages
+         * (1 turn for each player, 2 stages in both, selection of piece, then selection of direction)
+         */
         SELECT_FROM_BLUE,
         SELECT_TO_BLUE,
         SELECT_FROM_RED,
@@ -27,6 +34,9 @@ public class BoardGameController {
 
 
         public SelectionPhase alter() {
+            /**
+             * Returns the next game stage
+             */
             return switch (this) {
                 case SELECT_FROM_BLUE -> SELECT_TO_BLUE;
                 case SELECT_TO_BLUE -> SELECT_FROM_RED;
@@ -36,6 +46,10 @@ public class BoardGameController {
         }
 
         public SelectionPhase alterBack() {
+            /**
+             * Returns from direction selection to piece selection
+             * Can't return from piece selection, so it throws RuntimeException
+             */
             return switch (this) {
                 case SELECT_TO_BLUE -> SELECT_FROM_BLUE;
                 case SELECT_TO_RED -> SELECT_FROM_RED;
@@ -45,15 +59,35 @@ public class BoardGameController {
         }
     }
 
+    /**
+     * Stores the current stage of the game
+     */
     private SelectionPhase selectionPhase = SelectionPhase.SELECT_FROM_BLUE;
 
+    /**
+     * Stores the selectable positions
+     */
     private List<Position> selectablePositions = new ArrayList<>();
+
+    /**
+     * Stores the unselectable positions (black tiles)
+     */
     private Position[] unselectablePositions;
 
+    /**
+     * Stores the currently selected piece's position
+     */
     private Position selected;
 
+    /**
+     * Instance of BoardGameModel
+     */
     private BoardGameModel model = new BoardGameModel();
 
+    /**
+     * Stores the name of the players,
+     * the winner's name is assigned to winnerName at the end of the game
+     */
     private String P1name;
     private String P2name;
     private String winnerName;
@@ -63,6 +97,9 @@ public class BoardGameController {
 
     @FXML
     private void initialize() {
+        /**
+         * Sets up the base of the game on the application window
+         */
         createBoard();
         createPieces();
         setUnselectablePositions();
@@ -71,6 +108,9 @@ public class BoardGameController {
     }
 
     private void createBoard() {
+        /**
+         * Creates the board using <code>createSquare()</code>
+         */
         for (int i = 0; i < board.getRowCount(); i++) {
             for (int j = 0; j < board.getColumnCount(); j++) {
                 var square = createSquare(i, j);
@@ -80,6 +120,9 @@ public class BoardGameController {
     }
 
     private StackPane createSquare(int i, int j) {
+        /**
+         * Creates and returns a square
+         */
         var square = new StackPane();
         square.getStyleClass().add("square");
         square.setOnMouseClicked(this::handleMouseClick);
@@ -87,6 +130,9 @@ public class BoardGameController {
     }
 
     private void createPieces() {
+        /**
+         * Creates each piece on the board using <code>createPiece(Color color)</code>
+         */
         for (int i = 0; i < model.getRedPieceCount(); i++) {
 
             model.redPositionProperty(i).addListener(this::piecePositionChange);
@@ -102,6 +148,10 @@ public class BoardGameController {
     }
 
     private Circle createPiece(Color color) {
+        /**
+         * Creates and returns a piece (Circle)
+         * of given <code>color</code>
+         */
         var piece = new Circle(35);
         piece.setFill(color);
         return piece;
@@ -109,6 +159,9 @@ public class BoardGameController {
 
     @FXML
     private void handleMouseClick(MouseEvent event) {
+        /**
+         * Handles a given <code>MouseEvent</code>
+         */
         var square = (StackPane) event.getSource();
         var row = GridPane.getRowIndex(square);
         var col = GridPane.getColumnIndex(square);
@@ -118,6 +171,9 @@ public class BoardGameController {
     }
 
     private void handleClickOnSquare(Position position) {
+        /**
+         * Handles mouse click on squares for different selectionPhases
+         */
         switch (selectionPhase) {
             case SELECT_FROM_BLUE:
             case SELECT_FROM_RED: {
@@ -125,7 +181,8 @@ public class BoardGameController {
                     selectPosition(position);
                     alterSelectionPhase();
                     Logger.info("Piece {} selected", model.getBluePieceNumber(selected).getAsInt());
-                    /*try {
+                    /*TODO selection cancellation only works with wait, but throws IllegalMonitoringStateException on every click
+                    try {
                         wait(0,1);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
@@ -168,6 +225,13 @@ public class BoardGameController {
     }
 
     private void alterSelectionPhase() {
+        /**
+         * Calls <code>alter()</code> to set the game up
+         * for the next stage. Hides the old (<code>hideSelectablePositions()</code>),
+         * selects the new (<code>setSelectablePositions()</code>) selectable positions
+         * and displays them (<code>showSelectablePositions()</code>).
+         * Calls <code>endGame()</code> if a player wins.
+         */
         selectionPhase = selectionPhase.alter();
         hideSelectablePositions();
         setSelectablePositions();
@@ -183,6 +247,9 @@ public class BoardGameController {
     }
 
     private void backToPieceSelection() {
+        /**
+         * Cancels move selection
+         */
         selectionPhase = selectionPhase.alterBack();
         hideSelectablePositions();
         setSelectablePositions();
@@ -191,6 +258,10 @@ public class BoardGameController {
 
 
     private void selectPosition(Position position) {
+        /**
+         * Sets <code>selected</code> as given <code>position</code>,
+         * then displays it using <code>showSelectedPosition()</code>
+         */
         selected = position;
         showSelectedPosition();
     }
@@ -219,6 +290,10 @@ public class BoardGameController {
     }
 
     private void setSelectablePositions() {
+        /**
+         * Selects all selectable positions for each stage,
+         * stores them in <code>selectablePositions</code>
+         */
         selectablePositions.clear();
         switch (selectionPhase) {
             case SELECT_FROM_BLUE -> selectablePositions.addAll(model.getBluePiecePositions());
@@ -253,6 +328,9 @@ public class BoardGameController {
     }
 
     private StackPane getSquare(Position position) {
+        /**
+         * Returns a square at a given <code>position</code>
+         */
         for (var child : board.getChildren()) {
             if (GridPane.getRowIndex(child) == null) continue;
             if (GridPane.getRowIndex(child) == position.row() && GridPane.getColumnIndex(child) == position.col()) {
@@ -271,12 +349,18 @@ public class BoardGameController {
     }
 
     public void setNames(String name1, String name2) {
+        /**
+         * Setter of <code>P1name</code> and <code>P2name</code>
+         */
         Logger.info("Setting names to {} & {}", name1, name2);
         this.P1name = name1;
         this.P2name = name2;
     }
 
     public void endGame() {
+        /**
+         * Sets up the application end window
+         */
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/end.fxml"));
         try {
             Parent root = fxmlLoader.load();

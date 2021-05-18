@@ -1,6 +1,9 @@
 package boardgame.model;
 
 public enum BlueDirection implements Direction {
+    /**
+     * Contains directions of moves of Player1
+     */
 
     UP_LEFT(-1, -1),
     UP(-1, 0),

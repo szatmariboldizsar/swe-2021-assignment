@@ -1,6 +1,10 @@
 package boardgame.model;
 
 public record Position(int row, int col) {
+    /**
+     * Record class
+     * Gives positions (rows and columns) to everything on the board
+     */
 
     public Position moveTo(Direction direction) {
         return new Position(row + direction.getRowChange(), col + direction.getColChange());

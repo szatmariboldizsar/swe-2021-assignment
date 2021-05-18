@@ -1,6 +1,9 @@
 package boardgame.model;
 
 public enum RedDirection implements Direction {
+    /**
+     * Contains directions of moves of Player2
+     */
 
     DOWN_RIGHT(1, 1),
     DOWN(1, 0),

@@ -4,6 +4,10 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class Piece {
+    /**
+     * Class of Piece objects
+     * A Piece object has a type and a position
+     */
 
     private PieceType type;
     private ObjectProperty<Position> position = new SimpleObjectProperty<Position>();
