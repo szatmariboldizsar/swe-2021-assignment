@@ -85,12 +85,10 @@ public class BoardGameController {
     private BoardGameModel model = new BoardGameModel();
 
     /**
-     * Stores the name of the players,
-     * the winner's name is assigned to winnerName at the end of the game
+     * Stores the name of the players
      */
     private String P1name;
     private String P2name;
-    private String winnerName;
 
     @FXML
     private GridPane board;
@@ -175,12 +173,24 @@ public class BoardGameController {
          * Handles mouse click on squares for different selectionPhases
          */
         switch (selectionPhase) {
-            case SELECT_FROM_BLUE:
+            case SELECT_FROM_BLUE: {
+                if (selectablePositions.contains(position)) {
+                    selectPosition(position);
+                    alterSelectionPhase();
+                    Logger.info("BLUE Piece {} selected", model.getBluePieceNumber(selected).getAsInt());
+                    /*TODO selection cancellation only works with wait, but throws IllegalMonitoringStateException on every click
+                    try {
+                        wait(0,1);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }*/
+                }
+            }
             case SELECT_FROM_RED: {
                 if (selectablePositions.contains(position)) {
                     selectPosition(position);
                     alterSelectionPhase();
-                    Logger.info("Piece {} selected", model.getBluePieceNumber(selected).getAsInt());
+                    Logger.info("RED Piece {} selected", model.getRedPieceNumber(selected).getAsInt());
                     /*TODO selection cancellation only works with wait, but throws IllegalMonitoringStateException on every click
                     try {
                         wait(0,1);
@@ -237,12 +247,10 @@ public class BoardGameController {
         setSelectablePositions();
         showSelectablePositions();
         if (model.getAllBlueValidMoves().isEmpty()) {
-            winnerName = P2name;
-            endGame();
+            endGame(P2name, P1name);
         }
         if (model.getAllRedValidMoves().isEmpty()) {
-            winnerName = P1name;
-            endGame();
+            endGame(P1name, P2name);
         }
     }
 
@@ -357,7 +365,7 @@ public class BoardGameController {
         this.P2name = name2;
     }
 
-    public void endGame() {
+    public void endGame(String winnerName, String loserName) {
         /**
          * Sets up the application end window
          */
@@ -365,7 +373,7 @@ public class BoardGameController {
         try {
             Parent root = fxmlLoader.load();
             EndController controller = fxmlLoader.<EndController>getController();
-            controller.setNames(winnerName);
+            controller.setNames(winnerName, loserName);
             Stage stage = (Stage) board.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();

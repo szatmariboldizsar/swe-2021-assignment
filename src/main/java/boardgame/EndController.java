@@ -1,5 +1,6 @@
 package boardgame;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,25 +12,37 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.tinylog.Logger;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class EndController {
+    /**
+     * Controller class of end.fxml
+     */
 
     @FXML
     private Text text;
 
-    private String name;
+    private String winner;
+    private String other;
 
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
-            text.setText("The winner is " + name + "!");
+            try {
+                updatePlayers();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 
     @FXML
-    public void setName(String name) {
-        this.name = name;
+    public void setNames(String name1, String name2) {
+        this.winner = name1;
+        this.other = name2;
+        this.text.setText("The winner is " + winner + "!");
     }
 
     @FXML
@@ -45,5 +58,30 @@ public class EndController {
     @FXML
     private void handleExitButton(ActionEvent event) {
         Platform.exit();
+    }
+
+    private void updatePlayers() throws IOException {
+        var mapper = new ObjectMapper();
+
+        Player.players = new ArrayList<Player>(Arrays.asList(mapper.readValue(new FileReader("players.json"), Player[].class)));
+
+        if (Player.getNames().contains(this.winner)) {
+            for (var player : Player.players) {
+                if (player.getName().equals(this.winner)) {
+                    player.setWins(player.getWins() + 1);
+                }
+            }
+        }
+        else {
+            new Player(this.winner, 1);
+        }
+
+        if (!Player.getNames().contains(this.other)) {
+            new Player(this.other, 0);
+        }
+
+        try (var writer = new FileWriter("players.json")) {
+                mapper.writerWithDefaultPrettyPrinter().writeValue(writer, Player.players);
+        }
     }
 }
