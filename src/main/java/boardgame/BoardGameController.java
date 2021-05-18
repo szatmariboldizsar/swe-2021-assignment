@@ -316,14 +316,14 @@ public class BoardGameController {
          */
         selectablePositions.clear();
         switch (selectionPhase) {
-            case SELECT_FROM_BLUE -> selectablePositions.addAll(model.getBluePiecePositions());
+            case SELECT_FROM_BLUE -> selectablePositions.addAll(model.getNotFinishedBluePiecePositions());
             case SELECT_TO_BLUE -> {
                 var pieceNumber = model.getBluePieceNumber(selected).getAsInt();
                 for (var direction : model.getBlueValidMoves(pieceNumber)) {
                     selectablePositions.add(selected.moveTo(direction));
                 }
             }
-            case SELECT_FROM_RED -> selectablePositions.addAll(model.getRedPiecePositions());
+            case SELECT_FROM_RED -> selectablePositions.addAll(model.getNotFinishedRedPiecePositions());
             case SELECT_TO_RED -> {
                 var pieceNumber = model.getRedPieceNumber(selected).getAsInt();
                 for (var direction : model.getRedValidMoves(pieceNumber)) {

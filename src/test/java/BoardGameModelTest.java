@@ -64,4 +64,11 @@ class BoardGameModelTest {
             assertFalse(BoardGameModel.isOnBoard(new Position(i, BoardGameModel.BOARD_WIDTH)));
         }
     }
+
+    @Test
+    public void testGetNotFinishedPositions() {
+        BoardGameModel bgm = new BoardGameModel();
+        assertEquals(bgm.getBluePiecePositions(), bgm.getNotFinishedBluePiecePositions());
+        assertEquals(bgm.getRedPiecePositions(), bgm.getNotFinishedRedPiecePositions());
+    }
 }

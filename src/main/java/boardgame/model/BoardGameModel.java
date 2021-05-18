@@ -1,6 +1,7 @@
 package boardgame.model;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.geometry.Pos;
 
 import java.util.*;
 
@@ -165,6 +166,8 @@ public class BoardGameModel {
          */
         return bluePieces[pieceNumber].getPosition();
     }
+
+
 
     public ObjectProperty<Position> redPositionProperty(int pieceNumber) {
         /**
@@ -364,6 +367,28 @@ public class BoardGameModel {
             positions.add(piece.getPosition());
         }
         return positions;
+    }
+
+    public List<Position> getNotFinishedRedPiecePositions() {
+        List<Position> allPositions = getRedPiecePositions();
+        List<Position> newPositions = new ArrayList<>();
+        for (var position : allPositions) {
+            if (position.row() != BOARD_HEIGHT - 1) {
+                newPositions.add(position);
+            }
+        }
+        return newPositions;
+    }
+
+    public List<Position> getNotFinishedBluePiecePositions() {
+        List<Position> allPositions = getBluePiecePositions();
+        List<Position> newPositions = new ArrayList<>();
+        for (var position : allPositions) {
+            if (position.row() != 0) {
+                newPositions.add(position);
+            }
+        }
+        return newPositions;
     }
 
     public OptionalInt getRedPieceNumber(Position position) {
