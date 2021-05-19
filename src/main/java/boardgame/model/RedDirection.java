@@ -17,14 +17,23 @@ public enum RedDirection implements Direction {
         this.colChange = colChange;
     }
 
+    /**
+     * Returns how many rows a direction changes
+     */
     public int getRowChange() {
         return rowChange;
     }
 
+    /**
+     * Returns how many columns a direction changes
+     */
     public int getColChange() {
         return colChange;
     }
 
+    /**
+     * Returns direction of given <code>rowChange</code> and <code>colChange</code>
+     */
     public static RedDirection of(int rowChange, int colChange) {
         for (var direction : values()) {
             if (direction.rowChange == rowChange && direction.colChange == colChange) {
@@ -33,9 +42,4 @@ public enum RedDirection implements Direction {
         }
         throw new IllegalArgumentException();
     }
-
-    public static void main(String[] args) {
-        System.out.println(of(1, -1));
-    }
-
 }

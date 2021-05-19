@@ -30,11 +30,11 @@ public class EndController {
     private String winner;
     private String other;
 
+    /**
+     * When the scene window is set, the program serializes players.json database
+     */
     @FXML
-    public void initialize() {
-        /**
-         * When the scene window is set, the program serializes players.json database
-         */
+    private void initialize() {
         Platform.runLater(() -> {
             try {
                 updatePlayers();
@@ -44,21 +44,21 @@ public class EndController {
         });
     }
 
+    /**
+     * Setters for the names, also sets the FXML text
+     */
     @FXML
     public void setNames(String name1, String name2) {
-        /**
-         * Setters for the names, also sets the FXML text
-         */
         this.winner = name1;
         this.other = name2;
         this.text.setText("The winner is " + winner + "!");
     }
 
+    /**
+     * Gets called when New Game button is pressed, launches a new game
+     */
     @FXML
-    public void handleNewGameButton(ActionEvent event) throws IOException {
-        /**
-         * Gets called when New Game button is pressed, launches a new game
-         */
+    private void handleNewGameButton(ActionEvent event) throws IOException {
         Logger.info("New Game Started");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/welcome.fxml"));
         Parent root = fxmlLoader.load();
@@ -67,18 +67,18 @@ public class EndController {
         stage.show();
     }
 
+    /**
+     * Gets called when Exit button is pressed, terminates the program
+     */
     @FXML
     private void handleExitButton(ActionEvent event) {
-        /**
-         * Gets called when Exit button is pressed, terminates the program
-         */
         Platform.exit();
     }
 
+    /**
+     * Serializes players.json database
+     */
     private void updatePlayers() throws IOException {
-        /**
-         * Serializes players.json database
-         */
         var mapper = new ObjectMapper();
 
         Player.players = new ArrayList<Player>(Arrays.asList(mapper.readValue(new FileReader("players.json"), Player[].class)));

@@ -22,21 +22,21 @@ public class BoardGameController {
      * Controller class of ui.fxml
      */
 
+    /**
+     * Enum of the game stages
+     * (1 turn for each player, 2 stages in both, selection of piece, then selection of direction)
+     */
     private enum SelectionPhase {
-        /**
-         * Enum of the game stages
-         * (1 turn for each player, 2 stages in both, selection of piece, then selection of direction)
-         */
+
         SELECT_FROM_BLUE,
         SELECT_TO_BLUE,
         SELECT_FROM_RED,
         SELECT_TO_RED;
 
-
+        /**
+         * Returns the next game stage
+         */
         public SelectionPhase alter() {
-            /**
-             * Returns the next game stage
-             */
             return switch (this) {
                 case SELECT_FROM_BLUE -> SELECT_TO_BLUE;
                 case SELECT_TO_BLUE -> SELECT_FROM_RED;
@@ -45,11 +45,11 @@ public class BoardGameController {
             };
         }
 
+        /**
+         * Returns from direction selection to piece selection
+         * Can't return from piece selection, so it throws RuntimeException
+         */
         public SelectionPhase alterBack() {
-            /**
-             * Returns from direction selection to piece selection
-             * Can't return from piece selection, so it throws RuntimeException
-             */
             return switch (this) {
                 case SELECT_TO_BLUE -> SELECT_FROM_BLUE;
                 case SELECT_TO_RED -> SELECT_FROM_RED;
@@ -93,11 +93,11 @@ public class BoardGameController {
     @FXML
     private GridPane board;
 
+    /**
+     * Sets up the base of the game on the application window
+     */
     @FXML
     private void initialize() {
-        /**
-         * Sets up the base of the game on the application window
-         */
         createBoard();
         createPieces();
         setUnselectablePositions();
@@ -105,10 +105,10 @@ public class BoardGameController {
         showSelectablePositions();
     }
 
+    /**
+     * Creates the board using <code>createSquare()</code>
+     */
     private void createBoard() {
-        /**
-         * Creates the board using <code>createSquare()</code>
-         */
         for (int i = 0; i < board.getRowCount(); i++) {
             for (int j = 0; j < board.getColumnCount(); j++) {
                 var square = createSquare(i, j);
@@ -117,20 +117,20 @@ public class BoardGameController {
         }
     }
 
+    /**
+     * Creates and returns a square
+     */
     private StackPane createSquare(int i, int j) {
-        /**
-         * Creates and returns a square
-         */
         var square = new StackPane();
         square.getStyleClass().add("square");
         square.setOnMouseClicked(this::handleMouseClick);
         return square;
     }
 
+    /**
+     * Creates each piece on the board using <code>createPiece(Color color)</code>
+     */
     private void createPieces() {
-        /**
-         * Creates each piece on the board using <code>createPiece(Color color)</code>
-         */
         for (int i = 0; i < model.getRedPieceCount(); i++) {
 
             model.redPositionProperty(i).addListener(this::piecePositionChange);
@@ -145,21 +145,21 @@ public class BoardGameController {
         }
     }
 
+    /**
+     * Creates and returns a piece (Circle)
+     * of given <code>color</code>
+     */
     private Circle createPiece(Color color) {
-        /**
-         * Creates and returns a piece (Circle)
-         * of given <code>color</code>
-         */
         var piece = new Circle(35);
         piece.setFill(color);
         return piece;
     }
 
+    /**
+     * Handles a given <code>MouseEvent</code>
+     */
     @FXML
     private void handleMouseClick(MouseEvent event) {
-        /**
-         * Handles a given <code>MouseEvent</code>
-         */
         var square = (StackPane) event.getSource();
         var row = GridPane.getRowIndex(square);
         var col = GridPane.getColumnIndex(square);
@@ -168,10 +168,10 @@ public class BoardGameController {
         handleClickOnSquare(position);
     }
 
+    /**
+     * Handles mouse click on squares for different selectionPhases
+     */
     private void handleClickOnSquare(Position position) {
-        /**
-         * Handles mouse click on squares for different selectionPhases
-         */
         switch (selectionPhase) {
             case SELECT_FROM_BLUE: {
                 if (selectablePositions.contains(position)) {
@@ -236,14 +236,14 @@ public class BoardGameController {
         }
     }
 
+    /**
+     * Calls <code>alter()</code> to set the game up
+     * for the next stage. Hides the old (<code>hideSelectablePositions()</code>),
+     * selects the new (<code>setSelectablePositions()</code>) selectable positions
+     * and displays them (<code>showSelectablePositions()</code>).
+     * Calls <code>endGame()</code> if a player wins.
+     */
     private void alterSelectionPhase() {
-        /**
-         * Calls <code>alter()</code> to set the game up
-         * for the next stage. Hides the old (<code>hideSelectablePositions()</code>),
-         * selects the new (<code>setSelectablePositions()</code>) selectable positions
-         * and displays them (<code>showSelectablePositions()</code>).
-         * Calls <code>endGame()</code> if a player wins.
-         */
         selectionPhase = selectionPhase.alter();
         hideSelectablePositions();
         setSelectablePositions();
@@ -256,54 +256,53 @@ public class BoardGameController {
         }
     }
 
+    /**
+     * Cancels move selection
+     */
     private void backToPieceSelection() {
-        /**
-         * Cancels move selection
-         */
         selectionPhase = selectionPhase.alterBack();
         hideSelectablePositions();
         setSelectablePositions();
         showSelectablePositions();
     }
 
-
+    /**
+     * Sets <code>selected</code> as given <code>position</code>,
+     * then displays it using <code>showSelectedPosition()</code>
+     */
     private void selectPosition(Position position) {
-        /**
-         * Sets <code>selected</code> as given <code>position</code>,
-         * then displays it using <code>showSelectedPosition()</code>
-         */
         selected = position;
         showSelectedPosition();
     }
 
+    /**
+     * Displays selected position
+     */
     private void showSelectedPosition() {
-        /**
-         * Displays selected position
-         */
         var square = getSquare(selected);
         square.getStyleClass().add("selected");
     }
 
+    /**
+     * Deselects selected position
+     */
     private void deselectSelectedPosition() {
-        /**
-         * Deselects selected position
-         */
         hideSelectedPosition();
         selected = null;
     }
 
+    /**
+     * Hides the selected position
+     */
     private void hideSelectedPosition() {
-        /**
-         * Hides the selected position
-         */
         var square = getSquare(selected);
         square.getStyleClass().remove("selected");
     }
 
+    /**
+     * Sets black tiles
+     */
     private void setUnselectablePositions() {
-        /**
-         * Sets black tiles
-         */
         unselectablePositions = model.unselectablePositions;
         for (var unselectable : unselectablePositions) {
             var square = getSquare(unselectable);
@@ -311,11 +310,11 @@ public class BoardGameController {
         }
     }
 
+    /**
+     * Selects all selectable positions for each stage,
+     * stores them in <code>selectablePositions</code>
+     */
     private void setSelectablePositions() {
-        /**
-         * Selects all selectable positions for each stage,
-         * stores them in <code>selectablePositions</code>
-         */
         selectablePositions.clear();
         switch (selectionPhase) {
             case SELECT_FROM_BLUE -> selectablePositions.addAll(model.getNotFinishedBluePiecePositions());
@@ -335,30 +334,30 @@ public class BoardGameController {
         }
     }
 
+    /**
+     * Displays selectable positions
+     */
     private void showSelectablePositions() {
-        /**
-         * Displays selectable positions
-         */
         for (var selectablePosition : selectablePositions) {
             var square = getSquare(selectablePosition);
             square.getStyleClass().add("selectable");
         }
     }
 
+    /**
+     * Hides selectable positions
+     */
     private void hideSelectablePositions() {
-        /**
-         * Hides selectable positions
-         */
         for (var selectablePosition : selectablePositions) {
             var square = getSquare(selectablePosition);
             square.getStyleClass().remove("selectable");
         }
     }
 
+    /**
+     * Returns a square at a given <code>position</code>
+     */
     private StackPane getSquare(Position position) {
-        /**
-         * Returns a square at a given <code>position</code>
-         */
         for (var child : board.getChildren()) {
             if (GridPane.getRowIndex(child) == null) continue;
             if (GridPane.getRowIndex(child) == position.row() && GridPane.getColumnIndex(child) == position.col()) {
@@ -376,19 +375,19 @@ public class BoardGameController {
         oldSquare.getChildren().clear();
     }
 
+    /**
+     * Setter of <code>P1name</code> and <code>P2name</code>
+     */
     public void setNames(String name1, String name2) {
-        /**
-         * Setter of <code>P1name</code> and <code>P2name</code>
-         */
         Logger.info("Setting names to {} & {}", name1, name2);
         this.P1name = name1;
         this.P2name = name2;
     }
 
-    public void endGame(String winnerName, String loserName) {
-        /**
-         * Sets up the application end window
-         */
+    /**
+     * Sets up the application end window
+     */
+    private void endGame(String winnerName, String loserName) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/end.fxml"));
         try {
             Parent root = fxmlLoader.load();

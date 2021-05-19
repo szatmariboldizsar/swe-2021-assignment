@@ -17,6 +17,9 @@ public class Player {
 
     public static List<Player> players;
 
+    /**
+     * Returns all player names
+     */
     public static Set<String> getNames() {
         var names = new HashSet<String>();
         for (var player : players) {
@@ -25,6 +28,9 @@ public class Player {
         return names;
     }
 
+    /**
+     * Constructor of Player class
+     */
     public Player(String name, int wins) {
         this.name = name;
         this.wins = wins;

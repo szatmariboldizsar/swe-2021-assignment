@@ -50,11 +50,11 @@ public class BoardGameModel {
 
     }
 
+    /**
+     * Constructor of BoardGameModel
+     * sets base values of <code>redPieces</code>, <code>bluePieces</code> and <code>unselectablePositions</code>
+     */
     public BoardGameModel(Position[] positions, Piece... pieces) {
-        /**
-         * Constructor of BoardGameModel
-         * sets base values of <code>redPieces</code>, <code>bluePieces</code> and <code>unselectablePositions</code>
-         */
         checkPieces(pieces);
         checkPositions(positions);
         this.unselectablePositions = positions.clone();
@@ -68,10 +68,10 @@ public class BoardGameModel {
         this.bluePieces = bluePieces.clone();
     }
 
+    /**
+     * Checks if given <code>pieces</code> can exist
+     */
     private void checkPieces(Piece[] pieces) {
-        /**
-         * Checks if given <code>pieces</code> can exist
-         */
         var seen = new HashSet<Position>();
         for (var piece : pieces) {
             if (!isOnBoard(piece.getPosition()) || seen.contains(piece.getPosition())) {
@@ -81,10 +81,10 @@ public class BoardGameModel {
         }
     }
 
+    /**
+     * Checks if given <code>positions</code> can exist
+     */
     private void checkPositions(Position[] positions) {
-        /**
-         * Checks if given <code>positions</code> can exist
-         */
         ArrayList<Integer> starterRows = new ArrayList<>();
         starterRows.add(0);
         starterRows.add(BOARD_HEIGHT - 1);
@@ -97,96 +97,95 @@ public class BoardGameModel {
         }
     }
 
+    /**
+     * Returns Player2 piece at given index
+     */
     public Piece getRedPiece(int pieceNumber) {
-        /**
-         * Returns Player2 piece at given index
-         */
         return redPieces[pieceNumber];
     }
 
+    /**
+     * Returns Player1 piece at given index
+     */
     public Piece getBluePiece(int pieceNumber) {
-        /**
-         * Returns Player1 piece at given index
-         */
         return bluePieces[pieceNumber];
     }
 
+    /**
+     * Returns Player2 piece count
+     */
     public int getRedPieceCount() {
-        /**
-         * Returns Player2 piece count
-         */
         return redPieces.length;
     }
 
+    /**
+     * Returns Player1 piece count
+     */
     public int getBluePieceCount() {
-        /**
-         * Returns Player1 piece count
-         */
         return bluePieces.length;
     }
 
+    /**
+     * Returns Player2 piece type
+     */
     public PieceType getRedPieceType() {
-        /**
-         * Returns Player2 piece type
-         */
         return PieceType.RED;
     }
 
+    /**
+     * Returns Player1 piece type
+     */
     public PieceType getBluePieceType() {
-        /**
-         * Returns Player1 piece type
-         */
         return PieceType.BLUE;
     }
 
+    /**
+     * Returns Player2 piece type
+     */
     public PieceType getRedPieceType(int pieceNumber) {
-        /**
-         * Returns Player2 piece type
-         */
         return redPieces[pieceNumber].getType();
     }
 
+    /**
+     * Returns Player1 piece type
+     */
     public PieceType getBluePieceType(int pieceNumber) {
-        /**
-         * Returns Player1 piece type
-         */
         return bluePieces[pieceNumber].getType();
     }
 
+    /**
+     * Returns Player2 piece position at given index
+     */
     public Position getRedPiecePosition(int pieceNumber) {
-        /**
-         * Returns Player2 piece position at given index
-         */
         return redPieces[pieceNumber].getPosition();
     }
 
+    /**
+     * Returns Player1 piece position at given index
+     */
     public Position getBluePiecePosition(int pieceNumber) {
-        /**
-         * Returns Player1 piece position at given index
-         */
         return bluePieces[pieceNumber].getPosition();
     }
 
-
-
+    /**
+     * Returns Player2 piece position property at given index
+     */
     public ObjectProperty<Position> redPositionProperty(int pieceNumber) {
-        /**
-         * Returns Player2 piece position property at given index
-         */
         return redPieces[pieceNumber].positionProperty();
     }
 
+    /**
+     * Returns Player1 piece position property at given index
+     */
     public ObjectProperty<Position> bluePositionProperty(int pieceNumber) {
-        /**
-         * Returns Player1 piece position property at given index
-         */
+
         return bluePieces[pieceNumber].positionProperty();
     }
 
+    /**
+     * Checks if a Player2 pieces <code>direction</code> is a valid move
+     */
     public boolean isValidRedMove(int pieceNumber, RedDirection direction) {
-        /**
-         * Checks if a Player2 pieces <code>direction</code> is a valid move
-         */
         if (pieceNumber < 0 || pieceNumber >= redPieces.length) {
             throw new IllegalArgumentException();
         }
@@ -205,10 +204,10 @@ public class BoardGameModel {
         return true;
     }
 
+    /**
+     * Checks if a Player1 pieces <code>direction</code> is a valid move
+     */
     public boolean isValidBlueMove(int pieceNumber, BlueDirection direction) {
-        /**
-         * Checks if a Player1 pieces <code>direction</code> is a valid move
-         */
         if (pieceNumber < 0 || pieceNumber >= bluePieces.length) {
             throw new IllegalArgumentException();
         }
@@ -227,10 +226,10 @@ public class BoardGameModel {
         return true;
     }
 
+    /**
+     * Checks if a position is unselectable (black tile)
+     */
     public boolean isUnselectable(Position position) {
-        /**
-         * Checks if a position is unselectable (black tile)
-         */
         for (var unselectable : unselectablePositions) {
             if (position.equals(unselectable)) {
                 return true;
@@ -239,10 +238,10 @@ public class BoardGameModel {
         return false;
     }
 
+    /**
+     * Returns all Player2 valid moves
+     */
     public Set<RedDirection> getAllRedValidMoves() {
-        /**
-         * Returns all Player2 valid moves
-         */
         EnumSet<RedDirection> allValidMoves = EnumSet.noneOf(RedDirection.class);
         for (var pieceNumber = 0; pieceNumber < redPieces.length; pieceNumber++) {
             allValidMoves.addAll(getRedValidMoves(pieceNumber));
@@ -250,10 +249,10 @@ public class BoardGameModel {
         return allValidMoves;
     }
 
+    /**
+     * Returns all Player1 valid moves
+     */
     public Set<BlueDirection> getAllBlueValidMoves() {
-        /**
-         * Returns all Player1 valid moves
-         */
         EnumSet<BlueDirection> allValidMoves = EnumSet.noneOf(BlueDirection.class);
         for (var pieceNumber = 0; pieceNumber < bluePieces.length; pieceNumber++) {
             allValidMoves.addAll(getBlueValidMoves(pieceNumber));
@@ -261,10 +260,10 @@ public class BoardGameModel {
         return allValidMoves;
     }
 
+    /**
+     * Returns all of a Player2 piece's valid moves
+     */
     public Set<RedDirection> getRedValidMoves(int pieceNumber) {
-        /**
-         * Returns all of a Player2 piece's valid moves
-         */
         EnumSet<RedDirection> validMoves = EnumSet.noneOf(RedDirection.class);
         for (var direction : RedDirection.values()) {
             if (isValidRedMove(pieceNumber, direction)) {
@@ -274,10 +273,10 @@ public class BoardGameModel {
         return validMoves;
     }
 
+    /**
+     * Returns all of a Player1 piece's valid moves
+     */
     public Set<BlueDirection> getBlueValidMoves(int pieceNumber) {
-        /**
-         * Returns all of a Player1 piece's valid moves
-         */
         EnumSet<BlueDirection> validMoves = EnumSet.noneOf(BlueDirection.class);
         for (var direction : BlueDirection.values()) {
             if (isValidBlueMove(pieceNumber, direction)) {
@@ -287,11 +286,11 @@ public class BoardGameModel {
         return validMoves;
     }
 
+    /**
+     * Moves a Player2 piece in the given <code>direction</code>.
+     * If a Player1 piece is in the new position, it is removed from the game
+     */
     public void redMove(int pieceNumber, RedDirection direction) {
-        /**
-         * Moves a Player2 piece in the given <code>direction</code>.
-         * If a Player1 piece is in the new position, it is removed from the game
-         */
         redPieces[pieceNumber].moveTo(direction);
 
         OptionalInt bluePieceIndex = getBluePieceNumber(getRedPiecePosition(pieceNumber));
@@ -307,11 +306,11 @@ public class BoardGameModel {
         }
     }
 
+    /**
+     * Moves a Player1 piece in the given <code>direction</code>.
+     * If a Player2 piece is in the new position, it is removed from the game
+     */
     public void blueMove(int pieceNumber, BlueDirection direction) {
-        /**
-         * Moves a Player1 piece in the given <code>direction</code>.
-         * If a Player2 piece is in the new position, it is removed from the game
-         */
         bluePieces[pieceNumber].moveTo(direction);
 
         OptionalInt redPieceIndex = getRedPieceNumber(getBluePiecePosition(pieceNumber));
@@ -327,18 +326,18 @@ public class BoardGameModel {
         }
     }
 
+    /**
+     * Checks if a <code>position</code> is located on the board
+     */
     public static boolean isOnBoard(Position position) {
-        /**
-         * Checks if a <code>position</code> is located on the board
-         */
         return 0 <= position.row() && position.row() < BOARD_HEIGHT
                 && 0 <= position.col() && position.col() < BOARD_WIDTH;
     }
 
+    /**
+     * Returns a list of the positions of ALL pieces
+     */
     public List<Position> getAllPiecePositions() {
-        /**
-         * Returns a list of the positions of ALL pieces
-         */
         List<Position> positions = new ArrayList<>(redPieces.length + bluePieces.length);
 
         positions.addAll(getRedPiecePositions());
@@ -347,10 +346,10 @@ public class BoardGameModel {
         return positions;
     }
 
+    /**
+     * Returns a list of the positions of Player2 pieces
+     */
     public List<Position> getRedPiecePositions() {
-        /**
-         * Returns a list of the positions of Player2 pieces
-         */
         List<Position> positions = new ArrayList<>(redPieces.length);
         for (var piece : redPieces) {
             positions.add(piece.getPosition());
@@ -358,10 +357,10 @@ public class BoardGameModel {
         return positions;
     }
 
+    /**
+     * Returns a list of the positions of Player1 pieces
+     */
     public List<Position> getBluePiecePositions() {
-        /**
-         * Returns a list of the positions of Player1 pieces
-         */
         List<Position> positions = new ArrayList<>(bluePieces.length);
         for (var piece : bluePieces) {
             positions.add(piece.getPosition());
@@ -369,10 +368,10 @@ public class BoardGameModel {
         return positions;
     }
 
+    /**
+     * Returns a list of the positions of not finished Player2 pieces
+     */
     public List<Position> getNotFinishedRedPiecePositions() {
-        /**
-         * Returns a list of the positions of not finished Player2 pieces
-         */
         List<Position> allPositions = getRedPiecePositions();
         List<Position> newPositions = new ArrayList<>();
         for (var position : allPositions) {
@@ -383,10 +382,10 @@ public class BoardGameModel {
         return newPositions;
     }
 
+    /**
+     * Returns a list of the positions of not finished Player1 pieces
+     */
     public List<Position> getNotFinishedBluePiecePositions() {
-        /**
-         * Returns a list of the positions of not finished Player1 pieces
-         */
         List<Position> allPositions = getBluePiecePositions();
         List<Position> newPositions = new ArrayList<>();
         for (var position : allPositions) {
@@ -397,10 +396,10 @@ public class BoardGameModel {
         return newPositions;
     }
 
+    /**
+     * Returns a Player2 piece's index at the given <code>position</code>
+     */
     public OptionalInt getRedPieceNumber(Position position) {
-        /**
-         * Returns a Player2 piece's index at the given <code>position</code>
-         */
         for (int i = 0; i < redPieces.length; i++) {
             if (redPieces[i].getPosition().equals(position)) {
                 return OptionalInt.of(i);
@@ -409,10 +408,10 @@ public class BoardGameModel {
         return OptionalInt.empty();
     }
 
+    /**
+     * Returns a Player1 piece's index at the given <code>position</code>
+     */
     public OptionalInt getBluePieceNumber(Position position) {
-        /**
-         * Returns a Player1 piece's index at the given <code>position</code>
-         */
         for (int i = 0; i < bluePieces.length; i++) {
             if (bluePieces[i].getPosition().equals(position)) {
                 return OptionalInt.of(i);
@@ -421,6 +420,9 @@ public class BoardGameModel {
         return OptionalInt.empty();
     }
 
+    /**
+     * Returns a String listing all pieces
+     */
     public String toString() {
         StringJoiner joiner = new StringJoiner(",", "[", "]");
         for (var piece : redPieces) {
