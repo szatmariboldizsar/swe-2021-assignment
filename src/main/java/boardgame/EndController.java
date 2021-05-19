@@ -9,10 +9,13 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.tinylog.Logger;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -81,7 +84,11 @@ public class EndController {
     private void updatePlayers() throws IOException {
         var mapper = new ObjectMapper();
 
-        Player.players = new ArrayList<Player>(Arrays.asList(mapper.readValue(new FileReader("players.json"), Player[].class)));
+        Player.players = new ArrayList<Player>();
+
+        //Player.players = new ArrayList<Player>(Arrays.asList(mapper.readValue(getClass().getClassLoader().getResource("players.json"), Player[].class)));
+
+        //Player.players = new ArrayList<Player>(Arrays.asList(mapper.readValue(new FileReader("players.json"), Player[].class)));
 
         if (Player.getNames().contains(this.winner)) {
             for (var player : Player.players) {
@@ -98,8 +105,20 @@ public class EndController {
             new Player(this.other, 0);
         }
 
-        try (var writer = new FileWriter("players.json")) {
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            Logger.debug("Saving file as {}", file);
+            try (var writer = new FileWriter(file)) {
                 mapper.writerWithDefaultPrettyPrinter().writeValue(writer, Player.players);
+            } catch (IOException e) {
+                Logger.error(e, "Failed to save file");
+            }
         }
+
+        /*try (var writer = new FileWriter("players.json")) {
+                mapper.writerWithDefaultPrettyPrinter().writeValue(writer, Player.players);
+        }*/
     }
 }
